@@ -1,0 +1,12 @@
+__pycache__
+tests/.pytest_cache
+# Flask stuff:
+instance/
+.webassets-cache
+
+# pyenv
+.python-version
+
+.idea
+venv
+.DS_Store
