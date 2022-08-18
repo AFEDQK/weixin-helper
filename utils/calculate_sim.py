@@ -3,18 +3,18 @@ from simhash import Simhash
 import sys
 sys.path.append('../database/')
 from database_test import *
-threshold = 3
+threshold = 0
 
 
 def calculate_simhash(s1, s2):
     words1 = jieba.lcut(s1, cut_all=True)
     words2 = jieba.lcut(s2, cut_all=True)
     sim = Simhash(words1).distance(Simhash(words2))
-    # print(sim)
+    # print("对比结果：", sim)
     if(sim>threshold):
-        return False;
+        return False
     else:
-        return True;
+        return True
 
 if __name__ == '__main__':
     str1 = "【阿里达摩院】NLP组日常/校招实习 （北京/杭州 可转正）\
@@ -85,21 +85,6 @@ if __name__ == '__main__':
            '要求:吃苦耐劳，两班倒制！待遇:1800/月' \
            ' 联系电话:13114872789微信同步'
 
-    # calculate_simhash(str1,str6)
-    # calculate_simhash(str3, str2)
-    # calculate_simhash(str3, str1)
-    # calculate_simhash(str1, str4)
-    # calculate_simhash(str1, str5)
-    # calculate_simhash(str3, str5)
-    # DbHandle = DataBaseHandle()
-    # raw_message, raw_num = DbHandle.selectDB('select mes_raw from message')
-    # print(raw_num)
-    # str_raw1 = ''.join(raw_message[1])
-    # str_raw2 = ''.join(raw_message[2])
-    # print(str_raw1)
-    # print(str_raw2)
-    # target = calculate_simhash(str_raw1, str_raw2)
-    # print(target)
 
 
 

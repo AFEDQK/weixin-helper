@@ -5,7 +5,7 @@ from constant import PATH_RE_CONFIG
 
 
 class ConfigLoader(object):
-    def init_app(self, app):
+    def __init__(self):
         self.regex_config = self.read_config()
 
     def read_config(self):
