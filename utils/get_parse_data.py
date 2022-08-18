@@ -21,7 +21,7 @@ def keyword_match(text):
               r'|收：|收:|出：|出:|注册公司|安全员AC直出|收购劳务资质|汉硕佳酿|专业回收|批发|免费领取|定制|订做|定做|长期出|窗帘|装修|中标|铝单板|一手资源|承接|承包|定期发布'
     p1 = re.compile(pattern)
     m1 = p1.findall(text)
-    # print(m1, type(m1), len(m1))
+    print("关键词匹配：", m1)
     if len(m1) != 0:
         return False
     else:
@@ -29,15 +29,12 @@ def keyword_match(text):
 
 
 def handle_info(text):
-    types, acquire, money, data_original = check(text, None, None, None)
+    types, contact = check(text, None, None, None)
+    # print(types)
     cnt = 0
     if types == "[]" or len(types) == 0:
         cnt += 1
-    if acquire == "[]" or len(acquire) == 0:
-        cnt += 1
-    if money == "[]" or len(money) == 0:
-        cnt += 1
-    if cnt >= 2:
+    if cnt >= 1:
         old_target = False
     else:
         old_target = True
@@ -236,27 +233,3 @@ def save_splice_info(res, wxid, raw, time):
     # print("抽取结果：", raw_message[0])
     # print("双引号结果：", json.dumps(raw_message[0], indent=4, ensure_ascii=False))
 
-
-if __name__ == '__main__':
-    url_findJob = """优质长白班企业！要人多
-    【晶鼎鑫】女工18-40周岁
-     女生六天八小时， 长期22/小时，偶尔加加班。
-     在职率高，基本包进！
-     长期小时工
-    六天八小时为主，工作非常轻松
-    岗位：作业员、检验员。
-    压五天后一周一结。
-    长期此工价，不掉价！
-    综合到手工资4500以上！
-    需要穿无尘服，全部坐着上班，不是流水线，工作非常轻松，工资稳定，管理相当人性化！离唯亭很近
-    最少要求做满三个月！做不满三个月工资按照2280底薪+加班费计算
-    免费工作餐，需自行解决交通工具！
-    地址：亭苑西娄阳路！"""
-
-    target = seg_punc(url_findJob, None, None, None)
-    print(target)
-    res = json.dumps(target, ensure_ascii=False)
-    target = res.replace("'", '\"')
-    print("test")
-    print(target)
-    save_splice_info(target, None, None, None)
