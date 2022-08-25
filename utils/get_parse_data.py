@@ -15,6 +15,7 @@ from database_test import *
 '联系人': '无', '联系电话': ['15822775267'], '联系微信': '无', '项目内容': '专业格栅;方通;矿棉板;'}
 """
 
+
 def keyword_match(text):
     pattern = r'长期合作|群发|换群|治疗|专业生产|购买|收购|办理|代发|劳务资质|听课|刷题|月返|全国通用' \
               r'价格低|学历提升|招商|包教包会|如有打扰|标准化资讯|直播|价优|交流学习|优惠名额|加盟|厂家直|分公司|总包|职称|资质' \
@@ -28,9 +29,24 @@ def keyword_match(text):
         return True
 
 
+def cc_target(contact, city):
+    if contact == "[]" or len(contact) == 0:
+        contact_target = False
+    else:
+        contact_target = True
+    if city == "[]" or len(city) == 0:
+        city_target = False
+    else:
+        city_target = True
+    if contact_target and city_target:
+        return True
+    else:
+        return False
+
+
 def handle_info(text):
-    types, contact = check(text, None, None, None)
-    # print(types)
+    types, contact, city = check(text, None, None, None)
+    print(types, contact, city)
     cnt = 0
     if types == "[]" or len(types) == 0:
         cnt += 1
@@ -39,9 +55,11 @@ def handle_info(text):
     else:
         old_target = True
 
+    add_target = cc_target(contact, city)
+
     new_target = keyword_match(text)
-    print(old_target, new_target)
-    if old_target and new_target:
+    print(old_target, new_target, add_target)
+    if old_target and new_target and add_target:
         return True
     else:
         return False
@@ -214,6 +232,7 @@ def find_job(msg):
     formated_res = format_return_result(res)
     return formated_res
 
+
 def save_splice_info(res, wxid, raw, time):
     dataset = read_config()
     # print("标记")
@@ -232,4 +251,3 @@ def save_splice_info(res, wxid, raw, time):
     # raw_message, raw_num = DbHandle.selectDB('select mes_json from recruit')
     # print("抽取结果：", raw_message[0])
     # print("双引号结果：", json.dumps(raw_message[0], indent=4, ensure_ascii=False))
-
