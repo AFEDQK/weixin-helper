@@ -251,3 +251,11 @@ def save_splice_info(res, wxid, raw, time):
     # raw_message, raw_num = DbHandle.selectDB('select mes_json from recruit')
     # print("抽取结果：", raw_message[0])
     # print("双引号结果：", json.dumps(raw_message[0], indent=4, ensure_ascii=False))
+
+
+
+if __name__ == '__main__':
+    text = "广东，充电桩找大包或班组，详情15732205360同电话微信"
+    text1 = "找活 ：工地已完工有老板需要拉砖  倒二次结构 混凝土 的联系我：18164777039云南小刘自带工具，欢迎各位老板来电 随时进场广东范围之内[握手]"
+    # seg_punc(text1, None, None, None)
+    handle_info(text1)
