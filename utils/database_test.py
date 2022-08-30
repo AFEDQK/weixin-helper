@@ -2,7 +2,7 @@ import pymysql
 import json
 def read_config():
     """"读取配置"""
-    with open("re_config.json", encoding='UTF-8') as json_file:
+    with open("utils/re_config.json", encoding='UTF-8') as json_file:
         config = json.load(json_file)
     return config
 
