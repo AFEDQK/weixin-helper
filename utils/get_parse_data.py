@@ -5,9 +5,11 @@ from process_job_info import handle_search
 import re
 from Check_inval import check
 from extensions import config_loader
-from database_test import *
+from database_test import DataBaseHandle
 
-all_regions = config_loader.load_region()
+all_provinces = config_loader.load_region()
+regex_config = config_loader.read_config()
+
 """
 {'期望工作地点': [], '招工单位': [], '招工信息': [{'工种': '', '期望工作地点': '', '招工单位': [], '招工人数': '', 
 '联系人': [], '联系电话': '15822775267'}], '联系人': '无', '联系电话': ['15822775267'], '联系微信': '无', 
@@ -87,17 +89,17 @@ def to_list(item):
 
 def postprocess_working_place(working_place):
     filtered_places = []
-    if len(working_place) <= 1:
+    if not working_place:
         return []
+    if len(working_place) <= 1:
+        if working_place[0] in all_provinces:
+            return []
+        else:
+            return working_place
     else:
         for each_place in working_place:
-            if each_place in all_regions:
-                filtered_places.append(each_place)
-                continue
             if len(each_place) > 1:
                 filtered_places.append(each_place)
-        if len(filtered_places) <= 1:
-            return []
         return filtered_places
 
 
@@ -253,7 +255,7 @@ def find_job(msg):
 
 
 def save_splice_info(res, wxid, raw, time):
-    dataset = read_config()
+    dataset = regex_config
     # print("标记")
     for x, y in dataset.items():
         if x == "host":

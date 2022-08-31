@@ -1058,7 +1058,6 @@ c1照4米2以下可开/types
 兴隆台/LOC
 大洼/LOC
 银州/LOC
-清河/LOC
 调兵山/LOC
 开原/LOC
 双塔/LOC
@@ -2186,3 +2185,10 @@ c1照4米2以下可开/types
 金山/LOC
 方孔/others
 园孔/others
+长兴岛/LOC
+矿离/others
+广西/LOC
+西藏/LOC
+宁夏/LOC
+内蒙古/LOC
+施耐德/others

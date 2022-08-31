@@ -11,7 +11,7 @@ class ConfigLoader(object):
 
     def read_config(self):
         """"读取配置"""
-        with open(PATH_RE_CONFIG, "r", encoding="utf-8") as json_file:
+        with open(PATH_RE_CONFIG, "r", encoding="utf-8-sig") as json_file:
             config = json.load(json_file)
         return config
 
