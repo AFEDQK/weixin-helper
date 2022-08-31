@@ -1,21 +1,18 @@
 import pymysql
 import json
-def read_config():
-    """"读取配置"""
-    with open("utils/re_config.json", encoding='UTF-8') as json_file:
-        config = json.load(json_file)
-    return config
+from extensions import config_loader
+
+regex_config = config_loader.read_config()
+
 
 class DataBaseHandle(object):
     """定义一个MySQL 操作类"""
 
-
     def __init__(self, host1, user1, password1, db1):
         self.db = pymysql.connect(host=host1,
-                                  user=user1, #用户名
-                                  password=password1, #密码
-                                  db=db1) #选中的数据库
-
+                                  user=user1,  # 用户名
+                                  password=password1,  # 密码
+                                  db=db1)  # 选中的数据库
 
     def createDB(self, sql):
         self.cursor = self.db.cursor()
@@ -89,7 +86,7 @@ class DataBaseHandle(object):
 
 
 def read_database():
-    dataset = read_config()
+    dataset = regex_config
     for x, y in dataset.items():
         if x == "host":
             host1 = y
@@ -105,7 +102,7 @@ def read_database():
 
 if __name__ == '__main__':
     content = read_database()
-    dataset = read_config()
+    dataset = regex_config
     for x, y in dataset.items():
         if x == "host":
             host1 = y
@@ -120,13 +117,14 @@ if __name__ == '__main__':
     # print(json_data)
     mul_res = []
     describe = {"要求": "acquire", "工资及福利": "money", "工作时长": "work_time"}
-    res = {"工种": "types", "期望工作城市": "city", "招工地点": "place", "招工人数": "number", "联系人": "无", "联系电话": "contact", "联系微信": "无",
+    res = {"工种": "types", "期望工作城市": "city", "招工地点": "place", "招工人数": "number", "联系人": "无", "联系电话": "contact",
+           "联系微信": "无",
            "项目描述": "describe"}
     mul_res.append(res)
     # print(json.dumps(mul_res,ensure_ascii=False))  # 有层次感
     json_data = json.dumps(mul_res, ensure_ascii=False)
     # print(json_data)
-    DbHandle.insertDB('insert into json_test (json_data) values ('+json_data+')' )
+    DbHandle.insertDB("insert into json_test (json_data) values (' + json_data + ')")
 # DbHandle.insertDB('insert into account (username, balance) values ("%s", "%s")' % ("Zmm", "8888"))
 #     DbHandle.insertDB('insert into json_test (json_data) values ("%s")' % ("""[
 #     {
@@ -175,30 +173,13 @@ if __name__ == '__main__':
 # """))
 
 
-    # DbHandle.insertDB('insert into music (music_id, COMMENTS, DETAILS) values ("%s", "%s", "%s")' % ("001", "你好", "Hello"))
-    # DbHandle.deleteDB('delete from message where music_id = %s' % ("001"))
-    # DbHandle.updateDB('update music set COMMENTS = "%s" where DETAILS = "%s"' % ("只要一点点", "Hello"))
-    # raw_message, raw_num = DbHandle.selectDB('select mes_raw from message')
-    # print(raw_message, raw_num)
-    # if raw_num == 0:
-    #     print("目前数据库无数据，可直接插入")
-    # for item in raw_message:
-    #     str = ''.join(item)
-    # print(type(str))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# DbHandle.insertDB('insert into music (music_id, COMMENTS, DETAILS) values ("%s", "%s", "%s")' % ("001", "你好", "Hello"))
+# DbHandle.deleteDB('delete from message where music_id = %s' % ("001"))
+# DbHandle.updateDB('update music set COMMENTS = "%s" where DETAILS = "%s"' % ("只要一点点", "Hello"))
+# raw_message, raw_num = DbHandle.selectDB('select mes_raw from message')
+# print(raw_message, raw_num)
+# if raw_num == 0:
+#     print("目前数据库无数据，可直接插入")
+# for item in raw_message:
+#     str = ''.join(item)
+# print(type(str))
