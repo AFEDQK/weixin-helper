@@ -8,11 +8,10 @@ class ConfigLoader(object):
     def init_app(self, app):
         self.regex_config = self.read_config()
         self.all_region = self.load_region()
-        self.replace_dict = self.load_regex_replace_regular()
 
     def read_config(self):
         """"读取配置"""
-        with open(PATH_RE_CONFIG, "r", encoding='UTF-8') as json_file:
+        with open(PATH_RE_CONFIG, "r", encoding="utf-8") as json_file:
             config = json.load(json_file)
         return config
 
