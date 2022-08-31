@@ -1,11 +1,11 @@
 import json
 
-from utils.process_recruit_detail_info import extract_info
-from utils.process_job_info import handle_search
+from process_recruit_detail_info import extract_info
+from process_job_info import handle_search
 import re
-from utils.Check_inval import check
-from utils.extensions import config_loader
-from utils.database_test import *
+from Check_inval import check
+from extensions import config_loader
+from database_test import *
 
 all_regions = config_loader.load_region()
 """

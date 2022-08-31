@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- #
 # @Time : 2022/8/13 21:52
 import json
-from utils.constant import PATH_RE_CONFIG, PATH_REGION, PATH_REGEX_REPLACE
+from constant import PATH_RE_CONFIG, PATH_REGION, PATH_REGEX_REPLACE
 
 
 class ConfigLoader(object):
