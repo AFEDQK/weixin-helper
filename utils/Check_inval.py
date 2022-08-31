@@ -1,8 +1,10 @@
 # encoding:UTF-8
 import regex as re
-import json
-from extensions import lac, config_loader
+
+from utils.extensions import lac, config_loader
+
 regex_config = config_loader.read_config()
+replace_dict = config_loader.load_replace_dict()
 
 
 def getTypes(msg):
@@ -255,9 +257,10 @@ def process_return(types, money, acquire, number, contact, city, work_time, plac
         all_info.append(info)
         if type(types) != list:
             break
+    print(city)
     res = {"期望工作地点": city, "招工单位": place, "招工信息": all_info, "联系人": "无",
            "联系电话": contact, "联系微信": "无", "项目内容": "无"}
-    return types, contact
+    return types, contact, city
 
 
 def delBlank(obj):
@@ -303,28 +306,9 @@ def check(data, wxid, raw, time):
 
     # 十人   30到50人 四个 五六个 8九个人 shi ming shiwu ming 一个工管住不管吃 一个礼拜 一个班
     # 算0.5个工 不要暑期工 暑假工不要 物流仓库 28个班 热水空调 汽车玻璃 服务费20 威特电梯 8个通层
-
-    data = '<start>' + data.replace('有空调', '有空 调').replace('招聘装配工', '装配工').replace('空调车间', '空 调车间').replace('招生',
-                                                                                                            '').replace(
-        '》', '，').replace('个多月', ' 个多月').replace('一个人', '一 个人').replace('个星期', ' 个星期').replace('一个工管住不管吃',
-                                                                                               '一 个工管住不管吃').replace(
-        '个礼拜', ' 个礼拜').replace('个班', ' 个班').replace('0.5个工', '0.5 个工').replace('个通层', ' 个通层').replace('不要暑期工',
-                                                                                                      '').replace(
-        '暑假工不要', '').replace('五个', ' 5个').replace('个月', ' 个月').replace('个小时', ' 个小时').replace('三个', ' 3个').replace('五个',
-                                                                                                                   ' 5个').replace(
-        '两个', ' 2个').replace('一个', ' 1个').replace('十个人', ' 10人').replace('一名', ' 1名').replace('二名', ' 2名').replace('两名',
-                                                                                                                   ' 2名').replace(
-        '三名', ' 3名').replace('空调淋', '空 调淋').replace('十人', ' 10人') \
-        .replace('四个', ' 4个').replace('九个人', ' 9个').replace('十五名', ' 15名').replace('十名', ' 10名') \
-        .replace('物流仓库', '物 流仓 库').replace('热水空调', '热水空 调').replace('汽车玻璃', '汽车玻 璃 调').replace('服务费', '服 务费').replace(
-        '威特电梯', '威特电 梯').replace('空调室', '空 调室').replace('五六个', '5到6个').replace('26个英文字母', '26 个英文字母').replace(
-        '26个大小写字母', '26 个大小写字母').replace('26个字母', '26 个字母').replace('个工作日', ' 个工作日').replace('人间', ' 人间').replace(
-        '2个及以上完整', '2 个及以上完整').replace('人一个房间', '人一个房间').replace('个房间', ' 个房间').replace('十五个', '15个').replace('四名',
-                                                                                                              '4名').replace(
-        '\n', '').replace('管网证', '管 网证').replace('六名', '6名').replace('天', '天 ').replace('带焊工证', '带焊 工证').replace('六人',
-                                                                                                                 '6人').replace(
-        '个点', ' 个点').replace('个工地', ' 个工地').replace('管工作餐', '管 工作餐').replace('长期稳定', ' 长期稳定').replace('两人',
-                                                                                                      '2人') + '<end>'
+    for origin_text, replace_text in replace_dict:
+        data = data.replace(origin_text, replace_text)
+    data = f"<start>{data}<end>"
     return get_res(data, wxid, raw, time, data_original)
 
 

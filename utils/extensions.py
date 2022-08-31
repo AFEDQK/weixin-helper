@@ -1,7 +1,7 @@
 from LAC import LAC
 
-from constant import PATH_CUSTION
-from config_utils import ConfigLoader
+from utils.constant import PATH_CUSTION
+from utils.config_utils import ConfigLoader
 
 # 装载LAC模型
 lac = LAC(mode='lac')

@@ -1,11 +1,13 @@
 import json
 
-from process_recruit_detail_info import extract_info
-from process_job_info import handle_search
+from utils.process_recruit_detail_info import extract_info
+from utils.process_job_info import handle_search
 import re
-from Check_inval import check
-from database_test import *
+from utils.Check_inval import check
+from utils.extensions import config_loader
+from utils.database_test import *
 
+all_regions = config_loader.load_region()
 """
 {'期望工作地点': [], '招工单位': [], '招工信息': [{'工种': '', '期望工作地点': '', '招工单位': [], '招工人数': '', 
 '联系人': [], '联系电话': '15822775267'}], '联系人': '无', '联系电话': ['15822775267'], '联系微信': '无', 
@@ -14,6 +16,7 @@ from database_test import *
 '招工人数': [], '联系人': [], '联系电话': '15822775267'}], 
 '联系人': '无', '联系电话': ['15822775267'], '联系微信': '无', '项目内容': '专业格栅;方通;矿棉板;'}
 """
+
 
 def keyword_match(text):
     pattern = r'长期合作|群发|换群|治疗|专业生产|购买|收购|办理|代发|劳务资质|听课|刷题|月返|全国通用' \
@@ -28,9 +31,24 @@ def keyword_match(text):
         return True
 
 
+def cc_target(contact, city):
+    if contact == "[]" or len(contact) == 0:
+        contact_target = False
+    else:
+        contact_target = True
+    if city == "[]" or len(city) <= 1:
+        city_target = False
+    else:
+        city_target = True
+    if contact_target and city_target:
+        return True
+    else:
+        return False
+
+
 def handle_info(text):
-    types, contact = check(text, None, None, None)
-    # print(types)
+    types, contact, city = check(text, None, None, None)
+    print(types, contact, city)
     cnt = 0
     if types == "[]" or len(types) == 0:
         cnt += 1
@@ -39,9 +57,11 @@ def handle_info(text):
     else:
         old_target = True
 
+    add_target = cc_target(contact, city)
+
     new_target = keyword_match(text)
-    print(old_target, new_target)
-    if old_target and new_target:
+    print(old_target, new_target, add_target)
+    if old_target and new_target and add_target:
         return True
     else:
         return False
@@ -65,9 +85,27 @@ def to_list(item):
         return [item]
 
 
+def postprocess_working_place(working_place):
+    filtered_places = []
+    if len(working_place) <= 1:
+        return []
+    else:
+        for each_place in working_place:
+            if each_place in all_regions:
+                filtered_places.append(each_place)
+                continue
+            if len(each_place) > 1:
+                filtered_places.append(each_place)
+        if len(filtered_places) <= 1:
+            return []
+        return filtered_places
+
+
 def format_return_result(res):
     formated_res = dict()
-    formated_res["期望工作地点"] = to_list(res["期望工作地点"])
+    working_place = to_list(res["期望工作地点"])
+    # 处理单独省、市、区的情况，以及不正确的地址
+    formated_res["期望工作地点"] = postprocess_working_place(working_place)
     formated_res["招工单位"] = to_list(res["招工单位"])
     recruit_infos = res["招工信息"]
     formated_res["联系人"] = to_str(res["联系人"])
@@ -145,7 +183,6 @@ def seg_punc(msg, wxid, raw, time):
     # print(qa_sentence)
     res['项目内容'] = qa_sentence
     formated_res = format_return_result(res)
-    # print(formated_res)
     configuration = json.dumps(formated_res, ensure_ascii=False)
     save_splice_info(configuration, wxid, raw, time)
     return formated_res
@@ -214,6 +251,7 @@ def find_job(msg):
     formated_res = format_return_result(res)
     return formated_res
 
+
 def save_splice_info(res, wxid, raw, time):
     dataset = read_config()
     # print("标记")
@@ -229,7 +267,3 @@ def save_splice_info(res, wxid, raw, time):
     DbHandle = DataBaseHandle(host1, user1, password1, db1)
     DbHandle.insertDB("insert into recruit (mes_from, mes_raw, mes_time, mes_json) values ('%s', '%s', '%s', '%s')" % (
         wxid, raw, time, res))
-    # raw_message, raw_num = DbHandle.selectDB('select mes_json from recruit')
-    # print("抽取结果：", raw_message[0])
-    # print("双引号结果：", json.dumps(raw_message[0], indent=4, ensure_ascii=False))
-

@@ -1,6 +1,6 @@
 import regex as re
 
-from extensions import lac
+from utils.extensions import lac
 
 
 def getPERName(text):
