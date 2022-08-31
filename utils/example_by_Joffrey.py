@@ -5,11 +5,11 @@ import sys
 import jieba
 import websocket,time,json,requests,os,pickle
 from bs4 import BeautifulSoup
-from utils.get_parse_data import seg_punc, handle_info
-from utils.httpclient import *
-from utils.calculate_sim import *
-from utils.database_test import *
-from utils.process_recruit_detail_info import *
+from get_parse_data import seg_punc, handle_info
+from httpclient import *
+from calculate_sim import *
+from database_test import *
+from process_recruit_detail_info import *
 
 ip='127.0.0.1'
 port=5555
@@ -274,7 +274,7 @@ def handle_nest_text(msgJson, nest_info, mes_target):
 
 def read_config():
     """"读取配置"""
-    with open("utils/re_config.json", encoding='UTF-8') as json_file:
+    with open("re_config.json", encoding='UTF-8') as json_file:
         config = json.load(json_file)
     return config
 
