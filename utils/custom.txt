@@ -2193,3 +2193,4 @@ c1照4米2以下可开/types
 内蒙古/LOC
 施耐德/others
 白刚/others
+干新建/others
