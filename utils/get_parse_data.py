@@ -38,7 +38,7 @@ def cc_target(contact, city):
         contact_target = False
     else:
         contact_target = True
-    if city == "[]" or len(city) <= 1:
+    if city == "[]" or len(city) == 0:
         city_target = False
     else:
         city_target = True
@@ -49,7 +49,9 @@ def cc_target(contact, city):
 
 
 def handle_info(text):
-    types, contact, city = check(text, None, None, None)
+    types, contact, city, res = check(text, None, None, None)
+    formated_res = format_return_result(res)
+    city = formated_res["期望工作地点"]
     print(types, contact, city)
     cnt = 0
     if types == "[]" or len(types) == 0:
