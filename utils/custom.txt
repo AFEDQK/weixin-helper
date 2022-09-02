@@ -5,7 +5,6 @@
 碳钢氩电联/others
 要小工给水电工打下手/others
 氩电联/others
-廊坊文安/LOC
 要/v
 聘/v
 苏康码/others
@@ -16,7 +15,6 @@
 云贵川/LOC
 任章国/PER
 法休/others
-上海奉贤区金山区/LOC
 北京市/LOC
 噶噶/others
 新开工地/others
@@ -29,10 +27,7 @@
 省内证/others
 五台塔吊/others
 建行卡/others
-河北雄安/LOC
-上海金山/LOC
 杭州/LOC
-广州黄埔/LOC
 天津浮斯特吊装工程有限公司/ORG
 项目部/others
 湖北证/others
@@ -827,6 +822,7 @@ c1照4米2以下可开/types
 丰台/LOC
 石景山/LOC
 海淀/LOC
+海淀区/LOC
 门头沟/LOC
 房山/LOC
 通州/LOC
@@ -2185,12 +2181,17 @@ c1照4米2以下可开/types
 金山/LOC
 方孔/others
 园孔/others
+施耐德/others
 长兴岛/LOC
 矿离/others
 广西/LOC
 西藏/LOC
 宁夏/LOC
 内蒙古/LOC
-施耐德/others
 白刚/others
 干新建/others
+地址/others
+后三角/others
+大东宝马/others
+大理石/others
+江南/others

@@ -21,9 +21,16 @@ regex_config = config_loader.read_config()
 
 
 def keyword_match(text):
-    pattern = r'长期合作|群发|换群|治疗|专业生产|购买|收购|办理|代发|劳务资质|听课|刷题|月返|全国通用' \
+    pattern = r'群发|换群|治疗|专业生产|购买|收购|办理|代发|劳务资质|听课|刷题|月返|全国通用' \
               r'价格低|学历提升|招商|包教包会|如有打扰|标准化资讯|直播|价优|交流学习|优惠名额|加盟|厂家直|分公司|总包|职称|资质' \
-              r'|收：|收:|出：|出:|注册公司|安全员AC直出|收购劳务资质|汉硕佳酿|专业回收|批发|免费领取|定制|订做|定做|长期出|窗帘|装修|中标|铝单板|一手资源|承接|承包|定期发布'
+              r'|出：|出:|注册公司|安全员AC直出|收购劳务资质|汉硕佳酿|专业回收|批发|免费领取|定制|订做|定做|长期出|窗帘|装修|中标|铝单板|一手资源|承接|定期发布|消除企查查' \
+              r'微蓝盒子|专业补录|业绩补录|电话联系厂家|茅台|免费邮寄样品|现货秒发|欢迎老板询价下单|专业考培各类证书|报名考证|实力解决通过率 |免配合| 免考|【微蓝盒子】|收；' \
+              r'低价接单|极速出货|包邮|麦裙|智能群|收以下证书|收证书|收：|网络课程|在线网课|意向学员|协助报名|课程|生产厂家|预结算|图纸设计|标书制作|注册执照|代理记账|代开发票|住建厅八大员|周期短|价格低' \
+              r'退休一级造价|八大员一次过|继续教育|股权质押|资产抵押|项目抵押|历史最低价|当天发货|国之重器|致富热线|让利|宣传|真心为你服务|漏水检测|启动资金|量大从优|公司过账|薄利多销|价格包你满意|出售|工商变更|工商注册' \
+              r'4G流量卡|物联卡|全国发货|収藏永久看|每！日！福！利|全国秒发|安卓系统|速度快|价格合适|新旧设备分期融资|企业融资|贸易代采|欠条回收|长期换|项目直投|年利率|放款周期|走账|降负债 |成考|免试入学|测温设备管理系统|系统|代幵' \
+              r'验后付款|周期快|马上截止报名|回收|三辊闸| 全网推广|授权抖音快手|专业年审|审车|效果图|各类证书|官网永久可查|唯一社保|二级房建|公司资金雄厚|服务项目|全国业绩补录 |车年审|全国求购|中介茶水丰厚|专业消防预算和报价|专业消防图纸设计出图盖章' \
+              r'旋转吊篮|intel 酷睿i5处理器|靓机好货|全国包邮|补录|专业办证|建筑配件系列产品|投保电话|一站式采购|软过免考通道|软过免考|经销商|代理商|免费拆除|年租|感应门 地簧门|出山东建筑乙|做分期|回函|免费试用|封号|项目广告|出租！出租！|优惠多多 |瓷砖供应' \
+              r'求包月|安许'
     p1 = re.compile(pattern)
     m1 = p1.findall(text)
     print("关键词匹配：", m1)
@@ -38,7 +45,7 @@ def cc_target(contact, city):
         contact_target = False
     else:
         contact_target = True
-    if city == "[]" or len(city) <= 1:
+    if city == "[]" or len(city) == 0:
         city_target = False
     else:
         city_target = True
@@ -90,19 +97,19 @@ def to_list(item):
 
 
 def postprocess_working_place(working_place):
-    filtered_places = []
     if not working_place:
         return []
-    if len(working_place) <= 1:
-        if working_place[0] in all_provinces:
+    new_working_place = []
+    for item in working_place:
+        if len(item) > 1:
+            new_working_place.append(item)
+    if len(new_working_place) == 1:
+        if new_working_place[0] in all_provinces:
             return []
         else:
-            return working_place
+            return new_working_place
     else:
-        for each_place in working_place:
-            if len(each_place) > 1:
-                filtered_places.append(each_place)
-        return filtered_places
+        return new_working_place
 
 
 def format_return_result(res):
