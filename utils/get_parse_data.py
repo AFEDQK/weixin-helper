@@ -117,7 +117,12 @@ def format_return_result(res):
     working_place = to_list(res["期望工作地点"])
     # 处理单独省、市、区的情况，以及不正确的地址
     formated_res["期望工作地点"] = postprocess_working_place(working_place)
-    formated_res["招工单位"] = to_list(res["招工单位"])
+    #拍脑袋定的长度，后期修改
+    recruit_company = to_list(res["招工单位"])
+    if len(recruit_company) > 20:
+        formated_res["招工单位"] = []
+    else:
+        formated_res["招工单位"] = recruit_company
     recruit_infos = res["招工信息"]
     formated_res["联系人"] = to_str(res["联系人"])
     formated_res["联系电话"] = to_list(res["联系电话"])
