@@ -66,17 +66,16 @@ def getLOCName(str_content):
     return res
 
 
-def getMNumber(str_content):
-    text = str_content
-    lac_result = lac.run(text)
-    resdict = dict(zip(lac_result[0], lac_result[1]))
-    # print(resdict)
-    res = []
-    for item in resdict.items():
-        mystr = str(item[0]).replace('\n', '').replace(' ', '')
-        if (str(item[1]) == 'm' or str(item[1]) == 'n') and len(mystr) == 11 and mystr.isdigit():
-            res.append(mystr)
-    return res
+def getMNumber(content):
+    tel_rules = ["1[3-9]\\d{9}", "0\\d{2,3}-[1-9]\\d{6,8}"]
+    phones = set()
+    for rule in tel_rules:
+        phone = re.findall(rule, content)
+        if not phone:
+            continue
+        for p in phone:
+            phones.add(p)
+    return list(phones)
 
 
 def getAllMsg(content, data_original):
@@ -132,7 +131,7 @@ def getAllMsg(content, data_original):
     money = ''
     acquire = ''
     contact = getMNumber(content)
-    if len(contact) == 0:
+    if not contact:
         contact = getMNumber(data_original.replace('   ', ','))
     # print(contact)
     work_time = ''
@@ -292,17 +291,39 @@ def get_special_content(forward_text, content):
     return re.findall(regex_concat, content)
 
 
+def extract_telephone(data):
+    # 处理 电话号码
+    tel_rules = ["1[3-9]\\d{9}", "0\\d{2,3} [1-9]\\d{3,4} [0-9]\\d{3,4}", "0\\d{2,3}-[1-9]\\d{6,8}",
+                 "1[0-9]{2} [0-9]{4} [0-9]{4}"]
+    all_phones = []
+    for each_rule in tel_rules:
+        phone = re.findall(each_rule, data)
+        if not phone:
+            continue
+        all_phones.extend(phone)
+    # 统一电话的格式
+    res = []
+    for ori_phone in all_phones:
+        if " " not in ori_phone:
+            res.append((ori_phone, " %s " % ori_phone))
+        else:
+            if ori_phone[0] == "0":
+                seg_phone = ori_phone.split(" ")
+                phone_str = " %s-%s " % (seg_phone[0], "".join(seg_phone[1:]))
+                res.append((ori_phone, phone_str))
+            else:
+                phone_str = ori_phone.replace(" ", "")
+                res.append((ori_phone, " %s " % phone_str))
+    return res
+
+
 def check(data, wxid, raw, time):
     # globals().update(regex_config)
     data_original = data
-    # 处理 电话号码人
-    phones = re.findall('[0-9]{11}', data)
-    for p in phones:
-        data = data.replace(p, ' ' + p + ' ')
-    # 处理 189 0074 8140
-    phones = re.findall('[0-9]{3} [0-9]{4} [0-9]{4}', data)
-    for p in phones:
-        data = data.replace(p, ' ' + p.replace(' ', '') + ' ')
+    # 提取文本中的电话号码 or 座机号码
+    phones = extract_telephone(data)
+    for ori_phone, format_phone in phones:
+        data = data.replace(ori_phone, format_phone)
 
     # 十人   30到50人 四个 五六个 8九个人 shi ming shiwu ming 一个工管住不管吃 一个礼拜 一个班
     # 算0.5个工 不要暑期工 暑假工不要 物流仓库 28个班 热水空调 汽车玻璃 服务费20 威特电梯 8个通层
