@@ -128,6 +128,8 @@ def format_return_result(res):
     formated_res["联系电话"] = to_list(res["联系电话"])
     formated_res["联系微信"] = to_str(res["联系微信"])
     formated_res["项目内容"] = res["项目内容"]
+    formated_res["消息来源"] = res["消息来源"]
+    formated_res["个人昵称"] = res["个人昵称"]
     new_recruit_info = []
     for each_info in recruit_infos:
         info_dict = dict()
@@ -142,7 +144,7 @@ def format_return_result(res):
     return formated_res
 
 
-def seg_punc(msg, wxid, raw, time):
+def seg_punc(msg, wxid, raw, time, nickname):
     pattern = r'\n|\t|:|：|,|，| |!|！|\n'
     if not isinstance(msg, str):
         return {}
@@ -198,6 +200,9 @@ def seg_punc(msg, wxid, raw, time):
         #     qa_sentence += "。"
     # print(qa_sentence)
     res['项目内容'] = qa_sentence
+    res['个人昵称'] = nickname
+    res['消息来源'] = wxid
+    print(res)
     formated_res = format_return_result(res)
     configuration = json.dumps(formated_res, ensure_ascii=False)
     save_splice_info(configuration, wxid, raw, time)
