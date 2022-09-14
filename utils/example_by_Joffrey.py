@@ -360,6 +360,29 @@ def save_inval_info(msgJson):
 def handle_recv_msg(msgJson):
     output(f'收到消息:{msgJson}')
 
+    keyword = msgJson['content'].replace('\u2005', '')
+    if '@chatroom' in msgJson['wxid']:
+        roomid = msgJson['wxid']  # 群id
+        senderid = msgJson['id1']  # 个人id
+    else:
+        roomid = None
+        nickname = 'null'
+        senderid = msgJson['wxid']  # 个人id
+    nickname = get_member_nick(roomid, senderid)
+
+    if roomid:
+        if keyword == 'ding':
+            ws.send(send_msg('dong', roomid=roomid, wxid=senderid, nickname=nickname))
+        elif keyword == 'dong':
+            ws.send(send_msg('ding', roomid=roomid, wxid=senderid, nickname=nickname))
+    else:
+        if keyword == 'ding':
+            ws.send(send_msg('dong', roomid=roomid, wxid=senderid))
+        elif keyword == 'dong':
+            result = 'ding'
+            ws.send(send_msg(result, roomid=roomid, wxid=senderid))
+
+
     #########################
     aimlist = {'content'}
     # 检查无效信息
@@ -382,7 +405,7 @@ def handle_recv_msg(msgJson):
                                 if y2 == y3:
                                     for x4, y4 in msgJson.items():
                                         if x4 in aimlist2:
-                                            seg_punc(y, x3, y, y4)
+                                            seg_punc(y, x3, y, y4, nickname)
                     val_info = False
         # else:
         # save_inval_info(msgJson)
@@ -426,29 +449,6 @@ def handle_recv_msg(msgJson):
     # 	save_inval_info(msgJson)
 
     #########################
-
-    keyword = msgJson['content'].replace('\u2005', '')
-    if '@chatroom' in msgJson['wxid']:
-        roomid = msgJson['wxid']  # 群id
-        senderid = msgJson['id1']  # 个人id
-    else:
-        roomid = None
-        nickname = 'null'
-        senderid = msgJson['wxid']  # 个人id
-    nickname = get_member_nick(roomid, senderid)
-
-    if roomid:
-        if keyword == 'ding':
-            ws.send(send_msg('dong', roomid=roomid, wxid=senderid, nickname=nickname))
-        elif keyword == 'dong':
-            ws.send(send_msg('ding', roomid=roomid, wxid=senderid, nickname=nickname))
-    else:
-        if keyword == 'ding':
-            ws.send(send_msg('dong', roomid=roomid, wxid=senderid))
-        elif keyword == 'dong':
-            result = 'ding'
-            ws.send(send_msg(result, roomid=roomid, wxid=senderid))
-
 
 ###################################################################################
 def on_message(ws, message):
