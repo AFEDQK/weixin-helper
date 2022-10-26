@@ -9,7 +9,8 @@ from httpclient import *
 from calculate_sim import *
 from database_test import *
 from process_recruit_detail_info import *
-from extensions import config_loader
+from extensions import config_loader, DbHandle
+
 regex_config = config_loader.read_config()
 
 ip = '127.0.0.1'
@@ -299,17 +300,6 @@ def handle_nest_text(msgJson, nest_info, mes_target):
 
 def check_duplicate_text(msgJson):
     # 对接收到的消息与数据库中对比，返回布尔值，True为不重复，False为重复
-    dataset = regex_config
-    for x, y in dataset.items():
-        if x == "host":
-            host1 = y
-        elif x == "user":
-            user1 = y
-        elif x == "password":
-            password1 = y
-        elif x == "db":
-            db1 = y
-    DbHandle = DataBaseHandle(host1, user1, password1, db1)
     raw_message, raw_num = DbHandle.selectDB('select mes_raw from recruit')
 
     aimlist = {'content'}
@@ -328,18 +318,6 @@ def check_duplicate_text(msgJson):
 
 
 def save_inval_info(msgJson):
-    dataset = regex_config
-    for x, y in dataset.items():
-        if x == "host":
-            host1 = y
-        elif x == "user":
-            user1 = y
-        elif x == "password":
-            password1 = y
-        elif x == "db":
-            db1 = y
-    DbHandle = DataBaseHandle(host1, user1, password1, db1)
-
     wb = WechatBot()
     targetDict = wb.get_contact_list()
     aimlist = {'content'}
@@ -382,7 +360,6 @@ def handle_recv_msg(msgJson):
             result = 'ding'
             ws.send(send_msg(result, roomid=roomid, wxid=senderid))
 
-
     #########################
     aimlist = {'content'}
     # 检查无效信息
@@ -407,50 +384,8 @@ def handle_recv_msg(msgJson):
                                         if x4 in aimlist2:
                                             seg_punc(y, x3, y, y4, nickname)
                     val_info = False
-        # else:
-        # save_inval_info(msgJson)
-        # if num > 1 and val_info and mes_target:
-        # 	wb = WechatBot()
-        # 	targetDict = wb.get_contact_list()
-        # 	aimlist1 = {'wxid'}
-        # 	aimlist2 = {'time'}
-        # 	for x2, y2 in msgJson.items():
-        # 		if x in aimlist and x2 in aimlist1:
-        # 			for x3, y3 in targetDict.items():
-        # 				if y2 == y3:
-        # 					for x4, y4 in msgJson.items():
-        # 						if x4 in aimlist2:
-        # 							splice_content(y, x3, y, y4, num, nest_info)
-        # 	val_info = False
 
-        # 	# print("有效、重复且嵌套信息")
-        # 	for i in range(num):
-        # 		handle_nest_text(msgJson, nest_info[i], mes_target)
-        # 	val_info = False
-        # else:
-        # 	qf_list, list_num = deal_num(y)
-        # 	if list_num > 1:
-        # 		for i in range(list_num):
-        # 			handle_nest_text(msgJson, qf_list[i], mes_target)
-        # 			val_info = False
 
-    # 检查重复和无效消息并将消息解析存进数据库
-    # if val_info:
-    # 	print("该信息为有效不嵌套信息")
-    # 	mes_target = check_duplicate_text(msgJson)
-    # 	handle_raw_text(msgJson, mes_target)
-
-    # aimlist = {'content'}
-    # # 检查无效信息
-    # for x, y in msgJson.items():
-    # 	if x in aimlist:
-    # 		val_info = handle_info(y)
-    # if not val_info:
-    # 	save_inval_info(msgJson)
-
-    #########################
-
-###################################################################################
 def on_message(ws, message):
     j = json.loads(message)
     resp_type = j['type']

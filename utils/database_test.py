@@ -23,8 +23,8 @@ class DataBaseHandle(object):
         try:
             print("执行过这里")
             self.cursor.execute(sql)
-        except:
-            print('Error: unable to create table')
+        except Exception as e:
+            logging.info(f"创建数据表异常:{e}")
         finally:
             self.cursor.close()
 
@@ -35,7 +35,7 @@ class DataBaseHandle(object):
             print("插入条数为：", num)
             self.db.commit()
         except Exception as e:
-            logging.info(f"插入失败：{e}")
+            logging.info(f"插入数据失败：{e}")
             self.db.rollback()
         finally:
             self.cursor.close()
@@ -47,7 +47,8 @@ class DataBaseHandle(object):
             num = self.cursor.execute(sql)
             print("删除条数为：", num)
             self.db.commit()
-        except:
+        except Exception as e:
+            logging.info(f"Error: delete data error:{e}")
             self.db.rollback()
         finally:
             self.cursor.close()
@@ -59,7 +60,8 @@ class DataBaseHandle(object):
             num = self.cursor.execute(sql)
             print("更新条数为：", num)
             self.db.commit()
-        except:
+        except Exception as e:
+            logging.info(f"Error: unable data error:{e}")
             self.db.rollback()
         finally:
             self.cursor.close()
@@ -73,8 +75,8 @@ class DataBaseHandle(object):
             data = self.cursor.fetchall()
             # print("查询的内容为：", data)
             return data, num
-        except:
-            print('Error: unable to fecth data')
+        except Exception as e:
+            logging.info(f"Error: unable to fecth data:{e}")
         finally:
             self.cursor.close()
 
