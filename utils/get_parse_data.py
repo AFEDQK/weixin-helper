@@ -5,10 +5,9 @@ from process_job_info import handle_search
 import re
 from Check_inval import check
 from extensions import config_loader
-from database_test import DataBaseHandle
+from extensions import DbHandle
 
 all_provinces = config_loader.load_region()
-regex_config = config_loader.read_config()
 
 """
 {'期望工作地点': [], '招工单位': [], '招工信息': [{'工种': '', '期望工作地点': '', '招工单位': [], '招工人数': '', 
@@ -274,17 +273,5 @@ def find_job(msg):
 
 
 def save_splice_info(res, wxid, raw, time):
-    dataset = regex_config
-    # print("标记")
-    for x, y in dataset.items():
-        if x == "host":
-            host1 = y
-        elif x == "user":
-            user1 = y
-        elif x == "password":
-            password1 = y
-        elif x == "db":
-            db1 = y
-    DbHandle = DataBaseHandle(host1, user1, password1, db1)
     DbHandle.insertDB("insert into recruit (mes_from, mes_raw, mes_time, mes_json) values ('%s', '%s', '%s', '%s')" % (
         wxid, raw, time, res))
