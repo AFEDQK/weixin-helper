@@ -1,10 +1,7 @@
 # encoding:UTF-8
 import regex as re
 
-from extensions import lac, config_loader
-
-regex_config = config_loader.read_config()
-replace_dict = config_loader.load_replace_dict()
+from extensions import lac, replace_dict
 
 
 def getTypes(msg):

@@ -9,9 +9,8 @@ from httpclient import *
 from calculate_sim import *
 from database_test import *
 from process_recruit_detail_info import *
-from extensions import config_loader, DbHandle
+from extensions import DbHandle
 
-regex_config = config_loader.read_config()
 
 ip = '127.0.0.1'
 port = 5555

@@ -2,10 +2,7 @@ import logging
 
 import pymysql
 import json
-from extensions import config_loader
 from extensions import DbHandle
-
-regex_config = config_loader.read_config()
 
 
 class DataBaseHandle(object):

@@ -4,10 +4,7 @@ from process_recruit_detail_info import extract_info
 from process_job_info import handle_search
 import re
 from Check_inval import check
-from extensions import config_loader
-from extensions import DbHandle
-
-all_provinces = config_loader.load_region()
+from extensions import DbHandle, all_provinces
 
 """
 {'期望工作地点': [], '招工单位': [], '招工信息': [{'工种': '', '期望工作地点': '', '招工单位': [], '招工人数': '', 
@@ -116,7 +113,7 @@ def format_return_result(res):
     working_place = to_list(res["期望工作地点"])
     # 处理单独省、市、区的情况，以及不正确的地址
     formated_res["期望工作地点"] = postprocess_working_place(working_place)
-    #拍脑袋定的长度，后期修改
+    # 拍脑袋定的长度，后期修改
     recruit_company = to_list(res["招工单位"])
     if len(recruit_company) > 20:
         formated_res["招工单位"] = []
