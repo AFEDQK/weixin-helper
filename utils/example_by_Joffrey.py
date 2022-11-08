@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import hashlib
 import logging
 
 import websocket
@@ -10,7 +11,6 @@ from calculate_sim import *
 from database_test import *
 from process_recruit_detail_info import *
 from extensions import DbHandle
-
 
 ip = '127.0.0.1'
 port = 5555
@@ -37,6 +37,8 @@ JOIN_ROOM = 10000
 # 可以通过自定义，来指定接收指定群或个人的消息
 # Target_Dict = {'群消息测试2', '四月'}
 jieba.setLogLevel(logging.INFO)
+wb = WechatBot()
+targetDict = wb.get_contact_list()
 
 
 # 'type':49 带引用的消息
@@ -163,15 +165,9 @@ def send_wxuser_list():
     return json.dumps(qs)
 
 
-def handle_wxuser_list(j):
-    # i=0
-    # for item in j['content']:
-    # 	i+=1
-    # 	output(f"{i} {item['wxid']} {item['name']}")
+def handle_wxuser_list():
     output('启动完成')
 
-
-###################################################################################
 def heartbeat(msgJson):
     output(msgJson['content'])
 
@@ -188,8 +184,6 @@ def on_error(ws, error):
 def on_close(ws):
     output("closed")
 
-
-###################################################################################
 def destroy_all():
     qs = {
         'id': getid(),
@@ -225,7 +219,6 @@ def send_msg(msg, wxid='null', roomid=None, nickname='null'):
     return json.dumps(qs)
 
 
-###################################################################################
 def welcome_join(msgJson):
     output(f'收到消息:{msgJson}')
     if '邀请' in msgJson['content']['content']:
@@ -250,88 +243,6 @@ def handleMsg_cite(msgJson):
         'wxid': msgJson['content']['id1']
     }
     handle_recv_msg(msgJson)
-
-
-def handle_raw_text(msgJson, mes_target):
-    # 对不重复的消息进行解析存入数据库的操作
-    # print("该信息为有效不嵌套且不重复的信息")
-    if mes_target == True:
-        # print("执行")
-        wb = WechatBot()
-        targetDict = wb.get_contact_list()
-        aimlist = {'content'}
-        aimlist1 = {'wxid'}
-        aimlist2 = {'time'}
-
-        for x1, y1 in msgJson.items():
-            for x2, y2 in msgJson.items():
-                if x1 in aimlist and x2 in aimlist1:
-                    for x3, y3 in targetDict.items():
-                        if y2 == y3:
-                            for x4, y4 in msgJson.items():
-                                if x4 in aimlist2:
-                                    seg_punc(y1, x3, y1, y4)
-
-    else:
-        print("此条消息重复，无需保存至数据库")
-
-
-def handle_nest_text(msgJson, nest_info, mes_target):
-    # 对不重复的消息进行解析存入数据库的操作
-    # print("该信息为有效嵌套且不重复的信息")
-    print(mes_target)
-    if mes_target == True:
-        wb = WechatBot()
-        targetDict = wb.get_contact_list()
-        aimlist = {'content'}
-        aimlist1 = {'wxid'}
-        aimlist2 = {'time'}
-
-        for x1, y1 in msgJson.items():
-            for x2, y2 in msgJson.items():
-                if x1 in aimlist and x2 in aimlist1:
-                    for x3, y3 in targetDict.items():
-                        if y2 == y3:
-                            for x4, y4 in msgJson.items():
-                                if x4 in aimlist2:
-                                    extract_info(nest_info, x3, nest_info, y4)
-
-
-def check_duplicate_text(msgJson):
-    # 对接收到的消息与数据库中对比，返回布尔值，True为不重复，False为重复
-    raw_message, raw_num = DbHandle.selectDB('select mes_raw from recruit')
-
-    aimlist = {'content'}
-    mes_target = True
-    for x, y in msgJson.items():
-        if x in aimlist and raw_num != 0:
-            empty_set = set()
-            for i in range(raw_num):
-                str_raw = ''.join(raw_message[i])
-                target = calculate_simhash(str_raw, y)
-                empty_set.add(target)
-                if True in empty_set:
-                    mes_target = False
-                    break
-    return mes_target
-
-
-def save_inval_info(msgJson):
-    wb = WechatBot()
-    targetDict = wb.get_contact_list()
-    aimlist = {'content'}
-    aimlist1 = {'wxid'}
-    aimlist2 = {'time'}
-    for x1, y1 in msgJson.items():
-        for x2, y2 in msgJson.items():
-            if x1 in aimlist and x2 in aimlist1:
-                for x3, y3 in targetDict.items():
-                    if y2 == y3:
-                        for x4, y4 in msgJson.items():
-                            if x4 in aimlist2:
-                                DbHandle.insertDB(
-                                    "insert into invalInfo (mes_from, mes_raw, mes_time) values ('%s', '%s', '%s')" % (
-                                        x3, y1, y4))
 
 
 def handle_recv_msg(msgJson):
@@ -362,27 +273,25 @@ def handle_recv_msg(msgJson):
     #########################
     aimlist = {'content'}
     # 检查无效信息
+    # 先判断接收到的信息是否已解析入库
+    origin_text = msgJson["content"]
+    # 所有的数据都解析，在入库的时候通过关键词来判断是否插入
     for x, y in msgJson.items():
-        if x in aimlist:
-            # 检查是否是无效信息
-            val_info = handle_info(y)
-            if val_info:
-                # num, nest_info = handle(y)
-                # print(len(nest_info))
-                mes_target = check_duplicate_text(msgJson)
-                if val_info and mes_target:
-                    wb = WechatBot()
-                    targetDict = wb.get_contact_list()
-                    aimlist1 = {'wxid'}
-                    aimlist2 = {'time'}
-                    for x2, y2 in msgJson.items():
-                        if x in aimlist and x2 in aimlist1:
-                            for x3, y3 in targetDict.items():
-                                if y2 == y3:
-                                    for x4, y4 in msgJson.items():
-                                        if x4 in aimlist2:
-                                            seg_punc(y, x3, y, y4, nickname)
-                    val_info = False
+        if x not in aimlist:
+            continue
+        # 检查是否是无效信息
+        val_info = handle_info(y)
+        if not val_info:
+            continue
+        aimlist1 = {'wxid'}
+        aimlist2 = {'time'}
+        for x2, y2 in msgJson.items():
+            if x in aimlist and x2 in aimlist1:
+                for x3, y3 in targetDict.items():
+                    if y2 == y3:
+                        for x4, y4 in msgJson.items():
+                            if x4 in aimlist2:
+                                seg_punc(y, x3, y, y4, nickname)
 
 
 def on_message(ws, message):
