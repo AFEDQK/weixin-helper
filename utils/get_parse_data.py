@@ -1,3 +1,4 @@
+import hashlib
 import json
 
 from process_recruit_detail_info import extract_info
@@ -269,6 +270,13 @@ def find_job(msg):
     return formated_res
 
 
+def convert_md5(text):
+    res = hashlib.md5(text.encode("utf-8"))
+    return res.hexdigest()
+
+
 def save_splice_info(res, wxid, raw, time):
-    DbHandle.insertDB("insert into recruit (mes_from, mes_raw, mes_time, mes_json) values ('%s', '%s', '%s', '%s')" % (
-        wxid, raw, time, res))
+    raw_md5 = convert_md5(raw)
+    DbHandle.insertDB(
+        "insert into recruit (mes_from, mes_raw, mes_time, mes_json,mes_raw_md5) values ('%s', '%s', '%s', '%s','%s')" % (
+            wxid, raw, time, res, raw_md5))
