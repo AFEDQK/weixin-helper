@@ -12,7 +12,7 @@
   "host": "localhost",
   "user": "root",
   "password": "root",
-  "db": "pymysql"
+  "db": "weixin_helper"
 
 }
 
