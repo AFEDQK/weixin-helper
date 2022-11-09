@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
-import hashlib
-import logging
+import json
 
 import websocket
 import time
@@ -9,8 +8,6 @@ from get_parse_data import seg_punc, handle_info
 from httpclient import *
 from calculate_sim import *
 from database_test import *
-from process_recruit_detail_info import *
-from extensions import DbHandle
 
 ip = '127.0.0.1'
 port = 5555
@@ -168,6 +165,7 @@ def send_wxuser_list():
 def handle_wxuser_list():
     output('启动完成')
 
+
 def heartbeat(msgJson):
     output(msgJson['content'])
 
@@ -183,6 +181,7 @@ def on_error(ws, error):
 
 def on_close(ws):
     output("closed")
+
 
 def destroy_all():
     qs = {
@@ -224,7 +223,7 @@ def welcome_join(msgJson):
     if '邀请' in msgJson['content']['content']:
         roomid = msgJson['content']['id1']
         nickname = msgJson['content']['content'].split('"')[-2]
-        ws.send(send_msg(f'欢迎新进群的小伙伴', roomid=roomid, wxid='null', nickname=nickname))
+        # ws.send(send_msg(f'欢迎新进群的小伙伴', roomid=roomid, wxid='null', nickname=nickname))
 
 
 def handleMsg_cite(msgJson):
