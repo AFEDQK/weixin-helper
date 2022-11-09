@@ -1,4 +1,5 @@
 import logging
+import re
 
 import pymysql
 
@@ -27,11 +28,13 @@ class DataBaseHandle(object):
             num = self.cursor.execute(sql)
             print("插入条数为：", num)
             self.db.commit()
-        except Exception as e:
-            logging.info(f"插入数据失败：{e}")
-            self.db.rollback()
-        finally:
-            self.cursor.close()
+        except Exception as err:
+            logging.info(f"插入数据重复")
+            # Exception:Duplicate entry '' for key 'mes_raw_md5'
+            res = re.search("Duplicate entry '.*' for key 'mes_raw_md5'", str(err))
+            if res == None:
+                logging.info(f"插入数据失败：{err}")
+                self.db.rollback()
 
     def deleteDB(self, sql):
         try:
